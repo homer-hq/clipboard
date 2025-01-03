@@ -127,6 +127,30 @@ public class ClipboardModule extends NativeClipboardModuleSpec {
     }
   }
 
+  @ReactMethod
+  public void hasPDF(Promise promise) {
+    try {
+      ClipboardManager clipboard = getClipboardService();
+      ClipData clipData = clipboard.getPrimaryClip();
+
+      if (clipData != null && clipData.getItemCount() > 0) {
+        ClipData.Item item = clipData.getItemAt(0);
+        Uri uri = item.getUri();
+        if (uri != null) {
+          ContentResolver cr = reactContext.getContentResolver();
+          String mimeType = cr.getType(uri);
+          if (mimeType != null && mimeType.equals("application/pdf")) {
+            promise.resolve(true);
+            return;
+          }
+        }
+      }
+      promise.resolve(false);
+    } catch (Exception e) {
+      promise.reject("Clipboard:hasPDF", e);
+    }
+  }
+
   @Override
   public void hasImage(Promise promise) {
     promise.reject("Clipboard:hasImage", "hasImage is not supported on Android");
@@ -145,6 +169,44 @@ public class ClipboardModule extends NativeClipboardModuleSpec {
   @Override
   public void hasWebURL(Promise promise) {
     promise.reject("Clipboard:hasWebURL", "hasWebURL is not supported on Android");
+  }
+
+  @ReactMethod
+  public void getPDF(Promise promise) {
+    try {
+      ClipboardManager clipboard = getClipboardService();
+      ClipData clipData = clipboard.getPrimaryClip();
+
+      if (clipData != null && clipData.getItemCount() > 0) {
+        ClipData.Item item = clipData.getItemAt(0);
+        Uri uri = item.getUri();
+        if (uri != null) {
+          ContentResolver cr = reactContext.getContentResolver();
+          String mimeType = cr.getType(uri);
+          if (mimeType != null && mimeType.equals("application/pdf")) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            InputStream inputStream = cr.openInputStream(uri);
+
+            if (inputStream != null) {
+              byte[] buffer = new byte[1024];
+              int bytesRead;
+              while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+              }
+              inputStream.close();
+
+              byte[] pdfBytes = outputStream.toByteArray();
+              String base64PDF = Base64.encodeToString(pdfBytes, Base64.DEFAULT);
+              promise.resolve("data:application/pdf;base64," + base64PDF);
+              return;
+            }
+          }
+        }
+      }
+      promise.resolve(null);
+    } catch (Exception e) {
+      promise.reject("Clipboard:getPDF", e);
+    }
   }
 
   @ReactMethod

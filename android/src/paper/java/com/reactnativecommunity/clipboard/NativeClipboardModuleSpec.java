@@ -51,6 +51,10 @@ public abstract class NativeClipboardModuleSpec extends ReactContextBaseJavaModu
 
   @ReactMethod
   @DoNotStrip
+  public abstract void getPDF(Promise promise);
+
+  @ReactMethod
+  @DoNotStrip
   public abstract void setString(String content);
 
   @ReactMethod
@@ -64,6 +68,10 @@ public abstract class NativeClipboardModuleSpec extends ReactContextBaseJavaModu
   @ReactMethod
   @DoNotStrip
   public abstract void hasImage(Promise promise);
+
+  @ReactMethod
+  @DoNotStrip
+  public abstract void hasPDF(Promise promise);
 
   @ReactMethod
   @DoNotStrip
