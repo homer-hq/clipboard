@@ -133,6 +133,22 @@ RCT_EXPORT_METHOD(getImageJPG:(RCTPromiseResolveBlock)resolve
   }
 }
 
+RCT_EXPORT_METHOD(hasPDF:(RCTPromiseResolveBlock)resolve
+                  reject:(__unused RCTPromiseRejectBlock)reject)
+{
+  BOOL pdfPresent = NO;
+  UIPasteboard *clipboard = [UIPasteboard generalPasteboard];
+
+  for (NSItemProvider *itemProvider in clipboard.itemProviders) {
+    if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypePDF]) {
+      pdfPresent = YES;
+      break;
+    }
+  }
+  
+  resolve([NSNumber numberWithBool:pdfPresent]);
+}
+
 RCT_EXPORT_METHOD(hasImage:(RCTPromiseResolveBlock)resolve
                   reject:(__unused RCTPromiseRejectBlock)reject)
 {
@@ -212,6 +228,34 @@ RCT_EXPORT_METHOD(hasWebURL:(RCTPromiseResolveBlock)resolve
     resolve([NSNumber numberWithBool: NO]);
   }
   
+}
+
+RCT_EXPORT_METHOD(getPDF:(RCTPromiseResolveBlock)resolve
+                  reject:(__unused RCTPromiseRejectBlock)reject) {
+  UIPasteboard *clipboard = [UIPasteboard generalPasteboard];
+  NSString *withPrefix;
+  
+  for (NSItemProvider *itemProvider in clipboard.itemProviders) {
+    if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypePDF]) {
+      for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
+        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypePDF)) {
+          NSData *pdfData = [clipboard dataForPasteboardType:identifier];
+          if (pdfData) {
+            NSString *pdfDataBase64 = [pdfData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+            withPrefix = [NSString stringWithFormat:@"data:application/pdf;base64,%@", pdfDataBase64];
+            break;
+          }
+        }
+      }
+      break;
+    }
+  }
+  
+  if (withPrefix) {
+    resolve(withPrefix);
+  } else {
+    resolve(NULL);
+  }
 }
 
 RCT_EXPORT_METHOD(getImage:(RCTPromiseResolveBlock)resolve
