@@ -92,8 +92,5 @@
 			"javaPackageName": "com.reactnativecommunity.clipboard"
 		}
 	},
-	"packageManager": "yarn@4.1.1",
-	"workspaces": [
-		"example"
-	]
+	"packageManager": "yarn@4.1.1"
 }
