@@ -69,6 +69,16 @@ export interface Spec extends TurboModule {
 	 */
 	getImage(): Promise<string>;
 	/**
+	 * (iOS and Android Only)
+	 * Get clipboard pdf in base64, this method returns a `Promise`, so you can use following code to get clipboard content
+	 * ```javascript
+	 * async _getContent() {
+	 *   var content = await Clipboard.getPDF();
+	 * }
+	 * ```
+	 */
+	getPDF(): Promise<string>;
+	/**
 	 * Set content of string type. You can use following code to set clipboard content
 	 * ```javascript
 	 * _setContent() {
@@ -98,6 +108,16 @@ export interface Spec extends TurboModule {
 	 * ```
 	 */
 	hasString(): Promise<boolean>;
+	/**
+	 * Returns whether the clipboard has an pdf or is empty.
+	 * This method returns a `Promise`, so you can use following code to check clipboard content
+	 * ```javascript
+	 * async _hasContent() {
+	 *   var hasContent = await Clipboard.hasPDF();
+	 * }
+	 * ```
+	 */
+	hasPDF(): Promise<boolean>;
 	/**
 	 * Returns whether the clipboard has an image or is empty.
 	 * This method returns a `Promise`, so you can use following code to check clipboard content
