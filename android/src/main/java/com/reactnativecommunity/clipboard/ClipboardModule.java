@@ -30,6 +30,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
